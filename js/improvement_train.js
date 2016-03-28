@@ -393,7 +393,7 @@ $(document).ready(function(){
 
 								// values for hot stop
 								self.hotStop = true;
-								self.hotStopTime = 10000;
+								self.hotStopTime = 15000;
 
 								self.runTrain({
 									name: 'stop'
