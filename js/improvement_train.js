@@ -1,19 +1,18 @@
-$(document).ready(function(){
+var trainMovement = function(){
 	// attributes for moving on scroll event
 	var moveCount = 0;
 
 	// main attributes
 	var conteiner = d3.select("body")
-	// var w = Math.round(conteiner[0][0].offsetWidth);
 	var w = 1310;
 	var h = 3747;
 	
 	// Gaps between the carriages
-	var gapArr = [0, 80, 160, 240, 320, 400];
-
-	var carriageGap = 0.012;
+	var gapValue = 80;
+	var carriageYCoord = 74.8;
 	var carriageWidth = 60;
 	var carriageHeight = 30;
+	
 	var svg = conteiner.append("svg")
 				.attr("width", w)
 				.attr("height", h);
@@ -26,36 +25,9 @@ $(document).ready(function(){
 		.attr('fill', 'none')
 		.classed('path-main', true);
 
-	// var path = svg.select(".path-main");
-
-	// tweenAttr test
 	var path = svg.select(".path-main");
 
 	var trackSize = path.node().getTotalLength();
-
-	//Get path start point for placing marker
-  	function pathStartPoint(number) {
-  		switch (number){
-  			case 0:
-  				return gapArr[5]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  			case 1:
-  				return gapArr[4]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  			case 2:
-  				return gapArr[3]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  			case 3:
-  				return gapArr[2]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  			case 4:
-  				return gapArr[1]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  			case 5:
-  				return gapArr[0]+',' + (74.80000305175781 - carriageHeight/2)
-  				break;
-  		}
-  	}
 
 	var finiteStateMachine = function(){
 		var self = this;
@@ -112,6 +84,16 @@ $(document).ready(function(){
 				point6: 7650
 			}
 		};
+
+		//Get path start point for placing marker
+		this.pathStartPoint = function(number) {
+	  		var lengthTrain = factory.carriages.length-1;
+	  		if( number === 0 ){
+	  			return factory.gapArr[lengthTrain]+',' + (carriageYCoord - carriageHeight/2)
+	  		} else{
+	  			return factory.gapArr[lengthTrain-number]+',' + (carriageYCoord - carriageHeight/2)
+	  		}
+	  	}
 
 		this.mainInit = function(){
 			this.element.append("rect")
@@ -192,11 +174,13 @@ $(document).ready(function(){
 		this.init = function(options){
 			this.element = svg.append('g')
 				.attr('id', options.type)
-				.attr("transform", "translate(" + pathStartPoint(options.number) + ")")
+				.attr("transform", "translate(" + this.pathStartPoint(options.number) + ")")
 				.attr('width', carriageWidth)
 				.attr('height', carriageHeight)
 				.attr('T', this.states.increase.point0);			
 			
+			this.type = options.type;
+
 			if( options.type === 'main' ) {
 				this.mainInit();
 			} else{
@@ -334,14 +318,14 @@ $(document).ready(function(){
 			}
 		};
 
+		this.lazyCall = _.debounce(function(){console.log('Curretn point '+self.currentPoint)}, 300);
 
 		this.runTrain = function(option) {
-			option.name = !!option.name && typeof option.name === 'string' ? option.name.toLowerCase() : 'stop';
+			option.name = !!option.name && typeof option.name === 'string' ? option.name.toLowerCase() : 'stop';			
 			
 			// FOR FORWARD DIRECTION
 			if( option.name === 'start' && option.direction === 'forward' ){
 			
-				// var time = self.element.attr('T') ? self.control.$.timeOfRun + ((self.control.$.timeOfRun/100)*(self.element.attr('T')/(trackSize/100))) : self.control.$.timeOfRun;
 				var time = !!self.element.attr('T') ? (15000 - (((100 * self.element.attr('T'))/trackSize) * 15000) / 100)+self.hotStopTime : 15000+self.hotStopTime;
 				
 				self.element.transition().duration(time/self.control.$.timeOfRun).ease('linear')
@@ -388,7 +372,12 @@ $(document).ready(function(){
 								});							
 							// recovery values after hot stop
 								self.hotStop = false;
-								self.hotStopTime = 0;							
+								self.hotStopTime = 0;
+
+							// For calling hint window
+								if(self.type === 'main'){
+									self.lazyCall();						
+								}
 							} else if( i(t) >= +self.control.$.stopPoint-100 && self.hotStop === false){
 
 								// values for hot stop
@@ -410,7 +399,6 @@ $(document).ready(function(){
 			// FOR BACKWARD DIRECTION
 			else if( option.name === 'start' && option.direction === 'backward' ){
 				
-				// var time = self.control.$.timeOfRun + ((self.control.$.timeOfRun/100)*(self.element.attr('T')/(trackSize/100)));
 				var time = !!self.element.attr('T') ? (15000 + (((100 * self.element.attr('T'))/trackSize) * 15) / 100)+self.hotStopTime : 15000+self.hotStopTime;
 
 				
@@ -458,7 +446,12 @@ $(document).ready(function(){
 								});
 							// recovery values after hot stop
 								self.hotStop = false;
-								self.hotStopTime = 0;							
+								self.hotStopTime = 0;
+
+							// For calling hint window
+								if(self.type === 'main'){
+									self.lazyCall();						
+								}						
 							} else if( i(t) <= +self.control.$.stopPoint+100 && self.hotStop === false){
 
 								// values for hot stop
@@ -488,8 +481,13 @@ $(document).ready(function(){
 	// Factory
 	var factory = {
 		readyToUse: false,
+		gapArr: [],
 		carriages: [],
 		createCarriage: function(quantity){
+			for(var i = 0; i<quantity; i++){
+				this.gapArr[i] = i*gapValue;
+			}
+
 			for(var i = 0; i<quantity; i++){
 				this.carriages[i] = new finiteStateMachine();
 			}
@@ -497,11 +495,12 @@ $(document).ready(function(){
 			this.initCarriages();
 		},
 		initCarriages: function(){
+			var self = this;
 			this.carriages.map(function(carriage, index){
 				if(index === 0) {
-					carriage.init({timeOfRun: 1, gap: gapArr[index], number: index, type: 'main'});
+					carriage.init({timeOfRun: 1, gap: self.gapArr[index], number: index, type: 'main'});
 				} else{
-					carriage.init({timeOfRun: 1, gap: gapArr[index], number: index, type: 'secondary'});
+					carriage.init({timeOfRun: 1, gap: self.gapArr[index], number: index, type: 'secondary'});
 				}				
 			});
 
@@ -517,6 +516,7 @@ $(document).ready(function(){
 	}
 
 	// Creating of the carriages
+	// better to not use more than 10 carriages
 	factory.createCarriage(6);
 
 	// how many percents we have scrolled
@@ -531,4 +531,4 @@ $(document).ready(function(){
 
 		factory.retranslator('resolveMovement');
 	});
-});
+};
