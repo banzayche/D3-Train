@@ -12,7 +12,7 @@ var trainMovement = function(){
 	var carriageYCoord = 74.8;
 	var carriageWidth = 60;
 	var carriageHeight = 30;
-	
+
 	var svg = conteiner.append("svg")
 				.attr("width", w)
 				.attr("height", h);
@@ -39,6 +39,7 @@ var trainMovement = function(){
 		this.lastMoveCount = moveCount;
 		this.direction = 'forward';
 		this.newDirection = 'forward';
+		this.timeSeconds = 15000;
 
 		this.hotStopTime = 0;
 		this.hotStop = false;
@@ -50,10 +51,9 @@ var trainMovement = function(){
 				angle: 	0,
 				point1: null,
 				point2: null,
-				currentTrack: 'endlessSign',
 				mainPath: true,
 				direction: 'forward',
-				timeOfRun: 20000,
+				coefficient: 1,
 				stopPoint: 2000
 			}
 		};
@@ -230,7 +230,7 @@ var trainMovement = function(){
 					.attr('rx', 5)
 			}
 			
-			this.control.$.timeOfRun = options.timeOfRun;
+			this.control.$.coefficient = options.coefficient;
 			this.gap = options.gap;
 		}
 
@@ -326,9 +326,9 @@ var trainMovement = function(){
 			// FOR FORWARD DIRECTION
 			if( option.name === 'start' && option.direction === 'forward' ){
 			
-				var time = !!self.element.attr('T') ? (15000 - (((100 * self.element.attr('T'))/trackSize) * 15000) / 100)+self.hotStopTime : 15000+self.hotStopTime;
+				var time = !!self.element.attr('T') ? ((((trackSize-self.element.attr('T'))/(trackSize/100))/100)*self.timeSeconds)+self.hotStopTime : self.timeSeconds+self.hotStopTime;
 				
-				self.element.transition().duration(time/self.control.$.timeOfRun).ease('linear')
+				self.element.transition().duration(time/self.control.$.coefficient).ease('swing')
 					.attrTween('T', attrTweenTrack());
 
 				// Prevent shivering
@@ -378,11 +378,11 @@ var trainMovement = function(){
 								if(self.type === 'main'){
 									self.lazyCall();						
 								}
-							} else if( i(t) >= +self.control.$.stopPoint-100 && self.hotStop === false){
+							} else if( i(t) >= +self.control.$.stopPoint-70 && self.hotStop === false){
 
 								// values for hot stop
 								self.hotStop = true;
-								self.hotStopTime = 15000;
+								self.hotStopTime = 4500;
 
 								self.runTrain({
 									name: 'stop'
@@ -399,10 +399,9 @@ var trainMovement = function(){
 			// FOR BACKWARD DIRECTION
 			else if( option.name === 'start' && option.direction === 'backward' ){
 				
-				var time = !!self.element.attr('T') ? (15000 + (((100 * self.element.attr('T'))/trackSize) * 15) / 100)+self.hotStopTime : 15000+self.hotStopTime;
-
+				var time = !!self.element.attr('T') ? (((+self.element.attr('T')/(trackSize/100))/100)*self.timeSeconds)+self.hotStopTime : self.timeSeconds+self.hotStopTime;
 				
-				self.element.transition().duration(time/self.control.$.timeOfRun).ease('linear')
+				self.element.transition().duration(time/self.control.$.coefficient).ease('swing')
 					.attrTween('T', attrTweenTrack());
 
 				// Prevent shivering
@@ -452,11 +451,11 @@ var trainMovement = function(){
 								if(self.type === 'main'){
 									self.lazyCall();						
 								}						
-							} else if( i(t) <= +self.control.$.stopPoint+100 && self.hotStop === false){
+							} else if( i(t) <= +self.control.$.stopPoint+70 && self.hotStop === false){
 
 								// values for hot stop
 								self.hotStop = true;
-								self.hotStopTime = 15000;
+								self.hotStopTime = 4500;
 
 								self.runTrain({
 									name: 'stop'
@@ -464,7 +463,6 @@ var trainMovement = function(){
 								
 								self.resolveMovement();
 							}
-
 							return i(t);
 						 }
 					}
@@ -498,9 +496,9 @@ var trainMovement = function(){
 			var self = this;
 			this.carriages.map(function(carriage, index){
 				if(index === 0) {
-					carriage.init({timeOfRun: 1, gap: self.gapArr[index], number: index, type: 'main'});
+					carriage.init({coefficient: 1, gap: self.gapArr[index], number: index, type: 'main'});
 				} else{
-					carriage.init({timeOfRun: 1, gap: self.gapArr[index], number: index, type: 'secondary'});
+					carriage.init({coefficient: 1, gap: self.gapArr[index], number: index, type: 'secondary'});
 				}				
 			});
 
