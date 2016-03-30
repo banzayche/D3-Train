@@ -328,7 +328,7 @@ var trainMovement = function(){
 			
 				var time = !!self.element.attr('T') ? ((((trackSize-self.element.attr('T'))/(trackSize/100))/100)*self.timeSeconds)+self.hotStopTime : self.timeSeconds+self.hotStopTime;
 				
-				self.element.transition().duration(time/self.control.$.coefficient).ease('swing')
+				self.element.transition().duration(time/self.control.$.coefficient).ease('ease-in-out')
 					.attrTween('T', attrTweenTrack());
 
 				// Prevent shivering
@@ -378,11 +378,11 @@ var trainMovement = function(){
 								if(self.type === 'main'){
 									self.lazyCall();						
 								}
-							} else if( i(t) >= +self.control.$.stopPoint-70 && self.hotStop === false){
+							} else if( i(t) >= +self.control.$.stopPoint-100 && self.hotStop === false){
 
 								// values for hot stop
 								self.hotStop = true;
-								self.hotStopTime = 4500;
+								self.hotStopTime = 7000;
 
 								self.runTrain({
 									name: 'stop'
@@ -401,7 +401,7 @@ var trainMovement = function(){
 				
 				var time = !!self.element.attr('T') ? (((+self.element.attr('T')/(trackSize/100))/100)*self.timeSeconds)+self.hotStopTime : self.timeSeconds+self.hotStopTime;
 				
-				self.element.transition().duration(time/self.control.$.coefficient).ease('swing')
+				self.element.transition().duration(time/self.control.$.coefficient).ease('ease-in-out')
 					.attrTween('T', attrTweenTrack());
 
 				// Prevent shivering
@@ -451,11 +451,11 @@ var trainMovement = function(){
 								if(self.type === 'main'){
 									self.lazyCall();						
 								}						
-							} else if( i(t) <= +self.control.$.stopPoint+70 && self.hotStop === false){
+							} else if( i(t) <= +self.control.$.stopPoint+100 && self.hotStop === false){
 
 								// values for hot stop
 								self.hotStop = true;
-								self.hotStopTime = 4500;
+								self.hotStopTime = 7000;
 
 								self.runTrain({
 									name: 'stop'
