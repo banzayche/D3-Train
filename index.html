@@ -2,8 +2,11 @@
 <head>
 	<meta charset="UTF-8">
 	<title>D3 SVG</title>
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+
 	<script type="text/javascript" src="bower_components/d3/d3.js"></script>
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="bower_components/underscore/underscore-min.js"></script>
 
 	<script type="text/javascript" src="js/improvement_train.js"></script>
@@ -24,12 +27,95 @@
 			margin: 0px auto;
 			/*position: fixed;*/
 		}
+
+		#anchor1{
+			position: absolute;
+			top: 0;
+		}
+		#anchor2{
+			position: absolute;
+			top: 665px;
+		}
+		#anchor3{
+			position: absolute;
+			top: 1448px;
+		}
+		#anchor4{
+			position: absolute;
+			top: 2348px;
+		}
+		#anchor5{
+			position: absolute;
+			top: 3008px;
+		}
+		#anchor6{
+			position: absolute;
+			top: 3508px;
+		}
 	</style>
 </head>
 <body>
+	<div id="anchor1"></div>
+	<div id="anchor2"></div>
+	<div id="anchor3"></div>
+	<div id="anchor4"></div>
+	<div id="anchor5"></div>
+	<div id="anchor6"></div>
+
 	<script type="text/javascript">
+		// var tooltipsData = {
+		// 	1: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	},
+		// 	2: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	},
+		// 	3: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	},
+		// 	4: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	},
+		// 	5: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	},
+		// 	6: {
+		// 		dataToggle: 'tooltip',
+		// 		dataPlacement: 'top',
+		// 		title: 'Here will be tooltip!'
+		// 	}
+		// };
+
+
 		$(document).ready(function(){
-			trainMovement();	
+			trainMovement().then(function(data){
+				// code with tips will be here
+				// data.forEach(function(elem, index){
+				// 	elem.element
+				// 		.attr('data-toggle', tultipsData[index+1].dataToggle)
+				// 		.attr('data-placement', tultipsData[index+1].dataPlacement)
+				// 		.attr('data-original-title', tultipsData[index+1].title);
+				// });
+
+				// Anhors
+				$('.secondary, .main').on('click', function(e){
+					var link = $(this).attr('data-index');
+					link = '#anchor'+(+link+1);
+					var top = $(link).offset().top;
+
+					$('body,html').animate({scrollTop: top}, 5000);
+				});
+			});	
 		});
 	</script>
 </body>
