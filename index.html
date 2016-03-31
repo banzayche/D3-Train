@@ -6,7 +6,6 @@
 
 	<script type="text/javascript" src="bower_components/d3/d3.js"></script>
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-	<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="bower_components/underscore/underscore-min.js"></script>
 
 	<script type="text/javascript" src="js/improvement_train.js"></script>
@@ -52,6 +51,28 @@
 			position: absolute;
 			top: 3508px;
 		}
+
+		g{
+			cursor: pointer;
+		}
+	
+		.tooltip {
+		    pointer-events:none; /*let mouse events pass through*/
+		    opacity:0;
+		    transition: opacity 0.3s;
+		    color: white;
+		    padding: 5px;
+		}
+		div.tooltip {
+		    background: steelblue;
+		    border: 1px solid white;
+		    position: absolute;
+		    max-width: 8em;
+		    text-align:center;
+		}
+		div.tooltip .orange{
+			color: orange;
+		}
 	</style>
 </head>
 <body>
@@ -60,63 +81,74 @@
 	<div id="anchor3"></div>
 	<div id="anchor4"></div>
 	<div id="anchor5"></div>
-	<div id="anchor6"></div>
+	<div id="anchor6"></div>	
 
 	<script type="text/javascript">
-		// var tooltipsData = {
-		// 	1: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	},
-		// 	2: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	},
-		// 	3: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	},
-		// 	4: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	},
-		// 	5: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	},
-		// 	6: {
-		// 		dataToggle: 'tooltip',
-		// 		dataPlacement: 'top',
-		// 		title: 'Here will be tooltip!'
-		// 	}
-		// };
+		var tooltipsData = {
+			1: {
+				dataAnchorName: 'MAIN'
+			},
+			2: {
+				dataAnchorName: 'WHO WE ARE'
+			},
+			3: {
+				dataAnchorName: 'OUR WORKFLOW'
+			},
+			4: {
+				dataAnchorName: 'NY LOTTERY'
+			},
+			5: {
+				dataAnchorName: 'RESOURCES'
+			},
+			6: {
+				dataAnchorName: 'CONTACT US'
+			}
+		};
 
 
 		$(document).ready(function(){
 			trainMovement().then(function(data){
 				// code with tips will be here
-				// data.forEach(function(elem, index){
-				// 	elem.element
-				// 		.attr('data-toggle', tultipsData[index+1].dataToggle)
-				// 		.attr('data-placement', tultipsData[index+1].dataPlacement)
-				// 		.attr('data-original-title', tultipsData[index+1].title);
-				// });
+				data.forEach(function(elem, index){
+					elem.element
+						.attr('data-anchor-name', tooltipsData[index+1].dataAnchorName);
+				});
 
-				// Anhors
-				$('.secondary, .main').on('click', function(e){
+				var tooltip = $(".tooltip");
+				var HTMLmouseTip = $("div.tooltip.mouse");
+
+				$("g")
+	    			.on("mousemove", function (e) {
+	    					
+	    					var anchorName = $(this).attr('data-anchor-name');
+	    					HTMLmouseTip.find( ".orange" ).html(anchorName);
+
+							tooltip.css("opacity", "1");
+
+					    	HTMLmouseTip
+					            .css("left", Math.max(0, e.pageX - 110) + "px")
+					            .css("top", (e.pageY - 45) + "px");
+					})
+					.on("mouseout", function (e) {
+						return tooltip.css("opacity", "0");
+					});
+				
+				// Anchors
+				var scrollToAnchor = function(e){
 					var link = $(this).attr('data-index');
 					link = '#anchor'+(+link+1);
 					var top = $(link).offset().top;
 
 					$('body,html').animate({scrollTop: top}, 5000);
-				});
+				};
+
+				var throttled = _.throttle(scrollToAnchor, 5000);
+
+				$('.secondary, .main').on('click', throttled);
 			});	
 		});
 	</script>
+
+	<div class="mouse tooltip" >Click to go to<br><span class="orange"></span></div>
 </body>
 </html>

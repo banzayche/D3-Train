@@ -524,7 +524,7 @@ var trainMovement = function(){
 			var scrollPercent = (scrollTop) / (docHeight - winHeight);
 			var scrollPercentRounded = Math.round(scrollPercent*100);
 
-			console.log(scrollPercentRounded+'%')
+			// console.log(scrollPercentRounded+'%')
 
 			moveCount = scrollPercentRounded/100;
 
