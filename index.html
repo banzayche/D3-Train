@@ -29,27 +29,27 @@
 
 		#anchor1{
 			position: absolute;
-			top: 0;
+			top: 3508px;
 		}
 		#anchor2{
 			position: absolute;
-			top: 665px;
+			top: 3008px;
 		}
 		#anchor3{
 			position: absolute;
-			top: 1448px;
+			top: 2348px;
 		}
 		#anchor4{
 			position: absolute;
-			top: 2348px;
+			top: 1448px;
 		}
 		#anchor5{
 			position: absolute;
-			top: 3008px;
+			top: 665px;
 		}
 		#anchor6{
 			position: absolute;
-			top: 3508px;
+			top: 0;
 		}
 
 		g{
@@ -62,46 +62,64 @@
 		    transition: opacity 0.3s;
 		    color: white;
 		    padding: 5px;
+			box-sizing: border-box;
+		}
+		div.tooltip:after{
+			content: '';
+			position: absolute;
+			top: 100%;
+			right: -3px;
+			border-top: 10px solid white;
+			border-left: 10px solid transparent;
+			border-bottom: 10px solid transparent;
+			border-right: 10px solid white; 
+			width: 0;
+			height: 0;
+			box-sizing: border-box;
 		}
 		div.tooltip {
 		    background: steelblue;
-		    border: 1px solid white;
+		    border: 3px solid white;
+		    border-top-left-radius: 15px;
+		    border-top-right-radius: 15px;
+		    border-bottom-left-radius: 15px;
 		    position: absolute;
 		    max-width: 8em;
 		    text-align:center;
 		}
 		div.tooltip .orange{
 			color: orange;
+			font-weight: 600;
 		}
 	</style>
 </head>
 <body>
-	<div id="anchor1"></div>
+	<div id="anchor1"></div>	
 	<div id="anchor2"></div>
 	<div id="anchor3"></div>
 	<div id="anchor4"></div>
 	<div id="anchor5"></div>
-	<div id="anchor6"></div>	
+	<div id="anchor6"></div>
 
 	<script type="text/javascript">
 		var tooltipsData = {
 			1: {
-				dataAnchorName: 'MAIN'
+				dataAnchorName: 'CONTACT US'
 			},
 			2: {
-				dataAnchorName: 'WHO WE ARE'
-			},
-			3: {
-				dataAnchorName: 'OUR WORKFLOW'
-			},
-			4: {
-				dataAnchorName: 'NY LOTTERY'
-			},
-			5: {
 				dataAnchorName: 'RESOURCES'
 			},
+			3: {
+				dataAnchorName: 'NY LOTTERY'
+			},
+			4: {
+				dataAnchorName: 'OUR WORKFLOW'
+			},
+			5: {
+				dataAnchorName: 'WHO WE ARE'
+			},
 			6: {
-				dataAnchorName: 'CONTACT US'
+				dataAnchorName: 'MAIN'
 			}
 		};
 
@@ -118,21 +136,20 @@
 				var HTMLmouseTip = $("div.tooltip.mouse");
 
 				$("g")
-	    			.on("mousemove", function (e) {
-	    					
+	    			.on("mousemove", function (e) {	    					
 	    					var anchorName = $(this).attr('data-anchor-name');
 	    					HTMLmouseTip.find( ".orange" ).html(anchorName);
 
 							tooltip.css("opacity", "1");
 
 					    	HTMLmouseTip
-					            .css("left", Math.max(0, e.pageX - 110) + "px")
-					            .css("top", (e.pageY - 45) + "px");
+					            .css("left", Math.max(0, e.pageX - HTMLmouseTip.width() - 10 - 5) + "px")
+					            .css("top", (e.pageY - HTMLmouseTip.height() - 10 - 20) + "px");
 					})
 					.on("mouseout", function (e) {
 						return tooltip.css("opacity", "0");
 					});
-				
+
 				// Anchors
 				var scrollToAnchor = function(e){
 					var link = $(this).attr('data-index');
