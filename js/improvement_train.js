@@ -502,7 +502,7 @@ var trainMovement = function(){
 						carriage.init({coefficient: 1, gap: self.gapArr[index], number: index, type: 'main'});
 					} else{
 						carriage.init({coefficient: 1, gap: self.gapArr[index], number: index, type: 'secondary'});
-					}				
+					}
 				});
 
 				this.readyToUse = true;
